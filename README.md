@@ -36,4 +36,6 @@ does not matter.
 If you encounter any bugs please open an issue to let me know.
 
 ## Future Plans
-I currently have no further plans for the script. I welcome any forks and/or open a pull requests for any changes you'd like to make.
+I welcome any forks and/or open a pull requests for any changes you'd like to make. The main todo just involves making this easier to run by:
+1. Adding CLI options for passwords/usernames/secrets
+2. Push to pip to make the script easier to install
