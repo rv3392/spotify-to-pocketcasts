@@ -4,19 +4,7 @@ import json
 import urllib3
 
 
-def get_user_and_pw():
-    user = os.environ.get("POCKETCASTS_EMAIL", None)
-    if not user:
-        print("Environment Variable POCKETCASTS_EMAIL not set. Please set this before running!")
-        return (None, None)
-    pw = os.environ.get("POCKETCASTS_PW", None)
-    if not pw:
-        print("Environment Variable POCKETCASTS_PW not set. Please set this before running!")
-        return (None, None)
-    return (user, pw)
-
-def do_login(http):
-    user, pw = get_user_and_pw()
+def do_login(http, user, pw):
     if not user or not pw:
         return None
 

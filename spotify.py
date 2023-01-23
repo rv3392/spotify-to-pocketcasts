@@ -16,15 +16,19 @@ class Episode:
 class Show:
     id: str
     title: str
-    episodes: List[Episode] = field(default_factory=list) 
+    episodes: List[Episode] = field(default_factory=list)
 
 
 RATE_LIMIT = 20
 
 
-def do_login():
+def do_login(client_id, secret, redirect_uri):
     scope = "user-library-read,user-read-playback-position"
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope,))
+    sp = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+            scope=scope, client_id=client_id, client_secret=secret, redirect_uri=redirect_uri
+        )
+    )
     return sp
 
 
@@ -68,10 +72,10 @@ def get_listened_episodes_for_show(sp, show) -> List[Episode]:
             if not listened_episode.fully_played and listened_episode.resume_pos_ms == 0:
                 continue
             listened_episodes.append(listened_episode)
-        except(KeyError):
+        except (KeyError):
             continue
     print(f"There are {len(listened_episodes)} started episodes!")
-    
+
     return listened_episodes
 
 
