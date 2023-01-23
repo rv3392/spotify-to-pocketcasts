@@ -22,8 +22,10 @@ class Show:
 RATE_LIMIT = 20
 
 
-def do_login(client_id, secret, redirect_uri):
+def do_login(client_id, secret, redirect_uri, extra_scope=None):
     scope = "user-library-read,user-read-playback-position"
+    if extra_scope:
+        scope = scope + "," + extra_scope
     sp = spotipy.Spotify(
         auth_manager=SpotifyOAuth(
             scope=scope, client_id=client_id, client_secret=secret, redirect_uri=redirect_uri
@@ -83,3 +85,14 @@ def populate_listened_episodes(sp, shows: List[Show]):
     for show in shows:
         print(f"Processing {show.title}")
         show.episodes = get_listened_episodes_for_show(sp, show)
+
+
+def delete_all_podcast_subscriptions(sp: spotipy.Spotify):
+    podcasts: List[Show] = get_podcasts_with_less_info(sp)
+    podcast_ids = [podcast.id for podcast in podcasts]
+    print(f"Deleting {len(podcast_ids)} podcasts!")
+    response_jsons = []
+    for i in range(0, len(podcast_ids), 20):
+        res = sp.current_user_saved_shows_delete(podcast_ids[i:i+20])
+        response_jsons.append(res)
+    return (podcasts, response_jsons)
