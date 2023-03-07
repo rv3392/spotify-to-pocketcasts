@@ -1,10 +1,15 @@
 # spotify-to-pocketcasts
 
 This is a script to transfer Spotify podcast subscriptions and listening
-history to Pocketcasts.
+history to Pocket Casts.
 
-It uses the openly available third-party Spotify API through the spotipy
-module as well as a reverse-engineered Pocketcasts API. So far, I've only tested it for my own switch from Spotify to Pocketcasts for which it worked fairly well.
+It uses the openly available Spotify API through the spotipy
+module as well as a reverse-engineered Pocket Casts API. So far, I've only tested it for my own switch from Spotify to Pocketcasts for which it worked fairly well.
+
+## Features
+- Transfer subscriptions
+- Transfer listening history (including marking as played on Pocket Casts)
+- Optional script to delete subscriptions from Spotify
 
 ## Drawbacks
 
@@ -40,4 +45,6 @@ If you encounter any bugs please open an issue to let me know.
 ## Future Plans
 I welcome any forks and/or open a pull requests for any changes you'd like to make. The main todo just involves making this easier to run by:
 - [x] Adding CLI options for passwords/usernames/secrets
+- [ ] Lots of tests
 - [ ] Push to pip to make the script easier to install
+- [ ] A web-app version of this script if there is demand
