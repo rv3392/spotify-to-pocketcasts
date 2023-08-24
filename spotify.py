@@ -16,6 +16,7 @@ class Episode:
 class Show:
     id: str
     title: str
+    publisher: str
     episodes: List[Episode] = field(default_factory=list)
 
 
@@ -48,10 +49,10 @@ def get_podcasts(sp):
 
 def get_podcasts_with_less_info(sp):
     shows = get_podcasts(sp)
-    return [Show(show["show"]["id"], show["show"]["name"]) for show in shows]
+    return [Show(show["show"]["id"], show["show"]["name"], show["show"]["publisher"]) for show in shows]
 
 
-def get_listened_episodes_for_show(sp, show) -> List[Episode]:
+def get_listened_episodes_for_show(sp, show, log_prefix) -> List[Episode]:
     episodes = []
     raw_episodes_json = sp.show_episodes(show.id, limit=50)
     while raw_episodes_json:
@@ -60,7 +61,6 @@ def get_listened_episodes_for_show(sp, show) -> List[Episode]:
             raw_episodes_json = sp.next(raw_episodes_json)
         else:
             raw_episodes_json = None
-    print(f"There are {len(episodes)} episodes!")
 
     listened_episodes: List[Episode] = []
     for episode in episodes:
@@ -76,7 +76,7 @@ def get_listened_episodes_for_show(sp, show) -> List[Episode]:
             listened_episodes.append(listened_episode)
         except (KeyError):
             continue
-    print(f"There are {len(listened_episodes)} started episodes!")
+    print(f"{log_prefix} there are {len(episodes)} episodes on Sporify, which {len(listened_episodes)} are started!")
 
     return listened_episodes
 

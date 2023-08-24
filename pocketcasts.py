@@ -3,7 +3,6 @@ import os
 import json
 import urllib3
 
-
 def do_login(http, user, pw):
     if not user or not pw:
         return None
@@ -38,12 +37,11 @@ def get_history(http, token):
     return data
 
 
-def search_podcasts(http, token, term):
+def search_podcasts(http, token, term, log_prefix):
     header = create_auth_headers(token)
-    body = json.dumps({"term":term}, ensure_ascii=False).encode("ascii", errors="ignore")
+    body = json.dumps({"term":term}, ensure_ascii=False).encode("utf-8", errors="ignore")
     header["content-length"] = len(body)
-    print(header)
-    print(body)
+    print(f"{log_prefix} searching podcasts in pocketcasts; header: {header}, body: {body}")
     response = http.request(
         "POST",
         "https://api.pocketcasts.com/discover/search",
@@ -53,16 +51,22 @@ def search_podcasts(http, token, term):
     return json.loads(response.data)
 
 
-def search_podcasts_and_get_first_uuid(http, token, term):
-    search_result = search_podcasts(http, token, term)
+def search_podcasts_and_get_first_uuid(http, token, term, publisher, log_prefix):
+    search_result = search_podcasts(http, token, term, log_prefix)
     try:
         search_result["podcasts"][0]
     except(IndexError, KeyError):
         return None
-    # Get the first result
-    # It would be very rare to have two podcasts with the same name
-    # FIXME: Also check author here. Not sure if authors are consistent
-    # across platforms.
+
+    if len(search_result["podcasts"]) > 1 and search_result["podcasts"][0]["title"] != term:
+        search_result_podcast = [x for x in search_result["podcasts"] if x["author"] == publisher]
+
+        if len(search_result_podcast) == 1:
+            return search_result_podcast
+        else:
+            return None
+
+
     return search_result["podcasts"][0]["uuid"]
 
 
@@ -90,7 +94,7 @@ def add_subscription(http, token, uuid):
 def get_episodes(http, token, podcast_uuid):
     header = create_auth_headers(token)
     response = http.request(
-        "GET", f"https://podcast-api.pocketcasts.com/podcast/full/{podcast_uuid}", 
+        "GET", f"https://podcast-api.pocketcasts.com/podcast/full/{podcast_uuid}",
         headers=header
     )
     data = json.loads(response.data)
@@ -104,9 +108,9 @@ def get_episodes(http, token, podcast_uuid):
         episodes[episode["title"]] = episode["uuid"]
     return episodes
 
-def update_podcast_episode(http, token, body):
-    print("Updating episode:")
-    print(body)
+def update_podcast_episode(http, token, body, log_prefix):
+    print(f"{log_prefix} Updating episode - {body}")
+
     header = create_auth_headers(token)
     response = http.request(
         "POST", "https://api.pocketcasts.com/sync/update_episode", headers=header, body=body
