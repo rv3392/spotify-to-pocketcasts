@@ -80,29 +80,40 @@ def main():
     print("Logged In!")
 
     podcasts: List[spotify.Show] = spotify.get_podcasts_with_less_info(spotify_client)
-    print ("Got podcast subscriptions from Spotify.")
+    print (f"Got {len(podcasts)} podcast subscriptions from Spotify.")
 
     for podcast in podcasts:
-        print(f"Processing {podcast.title}")
-        podcast.episodes = spotify.get_listened_episodes_for_show(spotify_client, podcast)
+        log_prefix = f"{podcast.title} by {podcast.publisher}:"
+        print(f"{log_prefix} starting processing")
+        podcast.episodes = spotify.get_listened_episodes_for_show(spotify_client, podcast, log_prefix)
         print(
-            f"{podcast.title}: Syncing {len(podcast.episodes)} episodes from Spotify to Pocketcasts"
+            f"{log_prefix} Syncing {len(podcast.episodes)} episodes from Spotify to Pocketcasts"
         )
-        uuid = pocketcasts.search_podcasts_and_get_first_uuid(http, token, podcast.title)
-        print(uuid)
+        uuid = pocketcasts.search_podcasts_and_get_first_uuid(http, token, podcast.title, podcast.publisher, log_prefix)
+
+        print(f"{log_prefix} pocketcasts uuid of this show: {uuid}")
+
         # Subscribe to the podcast not caring if it's already subscribed
         # The request will return a non-200 code but we don't care.
         pocketcasts.add_subscription(http, token, uuid)
+        if uuid == None:
+            print(f"{log_prefix} could not find that show on pocketcasts")
+            continue
+
         episodes = pocketcasts.get_episodes(http, token, uuid)
+
         for episode in podcast.episodes:
+            episode_log_prefix = f"{podcast.title} by {podcast.publisher}, episode {episode.name}:"
+
             pocketcasts_episode_uuid = episodes.get(episode.name, None)
             if pocketcasts_episode_uuid == None:
-                print(f"Failed to sync: {podcast.title}, {episode.name}")
+                print(f"{episode_log_prefix} failed to sync")
                 continue
+
             body = create_body_from_spotify_episode(
                 episode, uuid=uuid, episode_uuid=pocketcasts_episode_uuid
             )
-            pocketcasts.update_podcast_episode(http, token, body)
+            pocketcasts.update_podcast_episode(http, token, body, episode_log_prefix)
 
 
 if __name__ == "__main__":
