@@ -11,10 +11,10 @@ def setup_arg_parser():
         prog="delete_spotify_subscriptions.py",
         description="Delete all podcast subscriptions from Spotify",
     )
-    parser.add_argument("--spotify_client_id", default=os.environ.get("SPOTIFY_CLIENT_ID", None))
-    parser.add_argument("--spotify_secret", default=os.environ.get("SPOTIFY_SECRET", None))
+    parser.add_argument("--spotify_client_id", default=os.environ.get("SPOTIPY_CLIENT_ID", None))
+    parser.add_argument("--spotify_secret", default=os.environ.get("SPOTIPY_CLIENT_SECRET", None))
     parser.add_argument(
-        "--spotify_redirect_uri", default=os.environ.get("SPOTIFY_REDIRECT_URI", None)
+        "--spotify_redirect_uri", default=os.environ.get("SPOTIPY_REDIRECT_URI", None)
     )
     return parser
 

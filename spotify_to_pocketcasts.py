@@ -14,17 +14,17 @@ def setup_arg_parser():
             prog = "spotify_to_pocketcasts.py",
             description = "Transfer subscriptions and listening history from Spotify to Pocket Casts"
     )
-    parser.add_argument("--pocketcasts_user", default=os.environ.get("POCKETCASTS_USER", None))
+    parser.add_argument("--pocketcasts_user", default=os.environ.get("POCKETCASTS_EMAIL", None))
     parser.add_argument("--pocketcasts_pw", default=os.environ.get("POCKETCASTS_PW", None))
-    parser.add_argument("--spotify_client_id", default=os.environ.get("SPOTIFY_CLIENT_ID", None))
-    parser.add_argument("--spotify_secret", default=os.environ.get("SPOTIFY_SECRET", None))
-    parser.add_argument("--spotify_redirect_uri", default=os.environ.get("SPOTIFY_REDIRECT_URI", None))
+    parser.add_argument("--spotify_client_id", default=os.environ.get("SPOTIPY_CLIENT_ID", None))
+    parser.add_argument("--spotify_secret", default=os.environ.get("SPOTIPY_CLIENT_SECRET", None))
+    parser.add_argument("--spotify_redirect_uri", default=os.environ.get("SPOTIPY_REDIRECT_URI", None))
     return parser
 
 
 def check_pocketcasts_login_info(user, pw):
     if not user:
-        print("No Pocket Casts username given! Please set POCKETCASTS_USER or use the --pocketcasts_user option")
+        print("No Pocket Casts username given! Please set POCKETCASTS_EMAIL or use the --pocketcasts_user option")
         return False
     if not pw:
         print("No Pocket Casts password given! Please set POCKETCASTS_PW or use the --pocketcasts_pw option")
@@ -34,13 +34,13 @@ def check_pocketcasts_login_info(user, pw):
 
 def check_spotify_secrets_info(client_id, secret, redirect_uri):
     if not client_id:
-        print("No Spotify Client ID given! Please set SPOTIFY_CLIENT_ID or use the --spotify_client_id option")
+        print("No Spotify Client ID given! Please set SPOTIPY_CLIENT_ID or use the --spotify_client_id option")
         return False
     if not secret:
-        print("No Spotify Secret given! Please set SPOTIFY_SECRET or use the --spotify_secret option")
+        print("No Spotify Secret given! Please set SPOTIPY_CLIENT_SECRET or use the --spotify_secret option")
         return False
     if not redirect_uri:
-        print("No Spotify Redirect URI given! Please set SPOTIFY_REDIRECT_URI or use the --spotify_redirect_uri option")
+        print("No Spotify Redirect URI given! Please set SPOTIPY_REDIRECT_URI or use the --spotify_redirect_uri option")
         return False
     return True
 
