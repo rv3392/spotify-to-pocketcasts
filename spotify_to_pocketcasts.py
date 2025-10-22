@@ -66,14 +66,14 @@ def main():
     parser: argparse.ArgumentParser = setup_arg_parser()
     args = parser.parse_args()
 
-    valid_args = check_spotify_secrets_info(args.spotify_client_id, args.spotify_secret, args.spotify_redirect_uri)
-    if not valid_args:
+    valid_spotify_args = check_spotify_secrets_info(args.spotify_client_id, args.spotify_secret, args.spotify_redirect_uri)
+    if not valid_spotify_args:
         exit(1)
     spotify_client = spotify.do_login(args.spotify_client_id, args.spotify_secret, args.spotify_redirect_uri)
 
     http = urllib3.PoolManager()
-    check_pocketcasts_login_info(args.pocketcasts_user, args.pocketcasts_pw)
-    if not valid_args:
+    valid_pocketcasts_login = check_pocketcasts_login_info(args.pocketcasts_user, args.pocketcasts_pw)
+    if not valid_pocketcasts_login:
         exit(1)
     token = pocketcasts.do_login(http, args.pocketcasts_user, args.pocketcasts_pw)
 
