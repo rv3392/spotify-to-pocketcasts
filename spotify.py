@@ -64,18 +64,19 @@ def get_listened_episodes_for_show(sp, show) -> List[Episode]:
 
     listened_episodes: List[Episode] = []
     for episode in episodes:
-        try:
-            listened_episode = Episode(
-                episode["name"],
-                episode["resume_point"].get("fully_played", False),
-                episode["resume_point"].get("resume_position_ms", 0),
-            )
-            # Ignore episodes that haven't been fully listened to and haven't been started
-            if not listened_episode.fully_played and listened_episode.resume_pos_ms == 0:
+        if not episode is None:
+            try:
+                listened_episode = Episode(
+                    episode["name"],
+                    episode["resume_point"].get("fully_played", False),
+                    episode["resume_point"].get("resume_position_ms", 0),
+                )
+                # Ignore episodes that haven't been fully listened to and haven't been started
+                if not listened_episode.fully_played and listened_episode.resume_pos_ms == 0:
+                    continue
+                listened_episodes.append(listened_episode)
+            except (KeyError):
                 continue
-            listened_episodes.append(listened_episode)
-        except (KeyError):
-            continue
     print(f"There are {len(listened_episodes)} started episodes!")
 
     return listened_episodes
