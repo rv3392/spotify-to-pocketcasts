@@ -24,21 +24,23 @@ manually fix any errors.
 2. Sometimes the name of episodes is mismatched between Spotify and Pocketcasts.
 In such cases the episode with the mismatched name will not have its listening
 history synced.
+3. The login to Pocketcasts only works for a standard manual email/password login,
+not for a google or apple account login.
 
 ## How to Use
 1. Install Python >= 3.11 and run `pip install -r requirements.txt` to install all Python requirements
-2. Setup a new application at https://developer.spotify.com/dashboard. The name
-does not matter.
+2. Login and add a new application at https://developer.spotify.com/dashboard. Enter whatever you'd like for the app name, app description, and redirect uri. For "Which API/SDKs are you planning to use?", check the Web API box.
    - Export the client ID, client secret and redirect URI as suggested here: https://spotipy.readthedocs.io/en/2.22.0/#quick-start
-3. Set the environment variables POCKETCASTS_EMAIL and POCKETCASTS_PW for your Pocketcasts username and password respectively. 
-    - Windows: Use `set POCKETCASTS_EMAIL='your.email@email.com'`
-    - Linux or MacOS: Use `export POCKETCASTS_EMAIL='your.email@email.com'`
-    - Repeat the same but for `POCKETCASTS_PW`
+3. Set the environment variables POCKETCASTS_EMAIL and POCKETCASTS_PW for your Pocketcasts username and password respectively.
+    - Windows: Use `set POCKETCASTS_EMAIL='your.email@email.com'` and then `set POCKETCASTS_PW='your password'`
+    - Linux or MacOS: Use `export POCKETCASTS_EMAIL='your.email@email.com'` and then `export POCKETCASTS_PW='your password'`
 4. Run the script using 
    ```bash
    python spotify_to_pocketcasts.py
-   ``` 
+   ```
    You'll be asked to authorise the script to read your library and podcast data - this is required to be able to transfer the data.
+   You'll also be promped to copy over the redirect url from your browser a few times. Make sure to copy the full url as shown in
+   your browser's address bar with the included code param, not just the base redirect uri you chose earlier.
 
 If you encounter any bugs please open an issue to let me know.
 
