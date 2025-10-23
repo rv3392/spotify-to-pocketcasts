@@ -8,6 +8,8 @@ import urllib3
 import spotify
 import pocketcasts
 
+from dotenv import load_dotenv
+load_dotenv()
 
 def setup_arg_parser():
     parser = argparse.ArgumentParser(
@@ -16,13 +18,17 @@ def setup_arg_parser():
     )
     parser.add_argument("--pocketcasts_user", default=os.environ.get("POCKETCASTS_EMAIL", None))
     parser.add_argument("--pocketcasts_pw", default=os.environ.get("POCKETCASTS_PW", None))
+    parser.add_argument("--pocketcasts_token", default=os.environ.get("POCKETCASTS_TOKEN", None), help="Auth token for pocket casts. Overrides email and password")
     parser.add_argument("--spotify_client_id", default=os.environ.get("SPOTIPY_CLIENT_ID", None))
     parser.add_argument("--spotify_secret", default=os.environ.get("SPOTIPY_CLIENT_SECRET", None))
     parser.add_argument("--spotify_redirect_uri", default=os.environ.get("SPOTIPY_REDIRECT_URI", None))
     return parser
 
 
-def check_pocketcasts_login_info(user, pw):
+def check_pocketcasts_login_info(user, pw, token):
+    if token: 
+        return True
+    
     if not user:
         print("No Pocket Casts username given! Please set POCKETCASTS_EMAIL or use the --pocketcasts_user option")
         return False
@@ -72,10 +78,14 @@ def main():
     spotify_client = spotify.do_login(args.spotify_client_id, args.spotify_secret, args.spotify_redirect_uri)
 
     http = urllib3.PoolManager()
-    valid_pocketcasts_login = check_pocketcasts_login_info(args.pocketcasts_user, args.pocketcasts_pw)
+    valid_pocketcasts_login = check_pocketcasts_login_info(args.pocketcasts_user, args.pocketcasts_pw, args.pocketcasts_token)
     if not valid_pocketcasts_login:
         exit(1)
-    token = pocketcasts.do_login(http, args.pocketcasts_user, args.pocketcasts_pw)
+
+    if args.pocketcasts_token:
+        token = args.pocketcasts_token
+    else:
+        token = pocketcasts.do_login(http, args.pocketcasts_user, args.pocketcasts_pw)
 
     print("Logged In!")
 

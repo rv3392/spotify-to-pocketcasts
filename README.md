@@ -31,7 +31,7 @@ not for a google or apple account login.
 1. Install Python >= 3.11 and run `pip install -r requirements.txt` to install all Python requirements
 2. Login and add a new application at https://developer.spotify.com/dashboard. Enter whatever you'd like for the app name, app description, and redirect uri. For "Which API/SDKs are you planning to use?", check the Web API box.
    - Export the client ID, client secret and redirect URI as suggested here: https://spotipy.readthedocs.io/en/2.22.0/#quick-start
-3. Set the environment variables POCKETCASTS_EMAIL and POCKETCASTS_PW for your Pocketcasts username and password respectively.
+3. Set the environment variables POCKETCASTS_EMAIL and POCKETCASTS_PW for your Pocketcasts username and password respectively. For Google or Apple SSO, use POCKETCASTS_TOKEN instead, which can be found by logging in via your browser and retrieving the `accessToken` from local storage
     - Windows: Use `set POCKETCASTS_EMAIL='your.email@email.com'` and then `set POCKETCASTS_PW='your password'`
     - Linux or MacOS: Use `export POCKETCASTS_EMAIL='your.email@email.com'` and then `export POCKETCASTS_PW='your password'`
 4. Run the script using 
