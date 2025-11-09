@@ -1,10 +1,12 @@
 import json
 import logging
+from typing import Any, Dict, Optional
+
 import urllib3
 
 logger = logging.getLogger(__name__)
 
-def do_login(http, user, pw):
+def do_login(http: urllib3.PoolManager, user: Optional[str], pw: Optional[str]) -> Optional[str]:
     if not user or not pw:
         logger.error("No username or password provided")
         return None
@@ -36,12 +38,12 @@ def do_login(http, user, pw):
         raise Exception(f"Failed to parse login response: {e}")
 
 
-def create_auth_headers(token):
+def create_auth_headers(token: str) -> Dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
 
 
 # Documenting the endpoint. This isn't used at all.
-def get_history(http, token):
+def get_history(http: urllib3.PoolManager, token: str) -> Dict[str, Any]:
     header = create_auth_headers(token)
     response = http.request(
         "POST",
@@ -52,7 +54,7 @@ def get_history(http, token):
     return data
 
 
-def search_podcasts(http, token, term):
+def search_podcasts(http: urllib3.PoolManager, token: str, term: str) -> Dict[str, Any]:
     logger.debug("Searching for podcasts with term: %s", term)
     header = create_auth_headers(token)
     body = json.dumps({"term":term}, ensure_ascii=False).encode("ascii", errors="ignore")
@@ -76,7 +78,7 @@ def search_podcasts(http, token, term):
         raise Exception(f"Failed to parse search response: {e}")
 
 
-def search_podcasts_and_get_first_uuid(http, token, term):
+def search_podcasts_and_get_first_uuid(http: urllib3.PoolManager, token: str, term: str) -> Optional[str]:
     try:
         search_result = search_podcasts(http, token, term)
     except Exception:
@@ -94,7 +96,7 @@ def search_podcasts_and_get_first_uuid(http, token, term):
     return search_result["podcasts"][0]["uuid"]
 
 
-def get_subscriptions(http, token):
+def get_subscriptions(http: urllib3.PoolManager, token: str) -> Dict[str, Any]:
     header = create_auth_headers(token)
     body = json.dumps({"v": 1}).encode("utf-8")
     response = http.request(
@@ -106,7 +108,7 @@ def get_subscriptions(http, token):
     return json.loads(response.data)
 
 
-def add_subscription(http, token, uuid):
+def add_subscription(http: urllib3.PoolManager, token: str, uuid: str) -> Optional[Dict[str, Any]]:
     header = create_auth_headers(token)
     body = json.dumps({"uuid": uuid}).encode("utf-8")
     response = http.request(
@@ -122,7 +124,7 @@ def add_subscription(http, token, uuid):
         return None
 
 
-def get_episodes(http, token, podcast_uuid):
+def get_episodes(http: urllib3.PoolManager, token: str, podcast_uuid: str) -> Dict[str, str]:
     header = create_auth_headers(token)
     response = http.request(
         "GET", f"https://podcast-api.pocketcasts.com/podcast/full/{podcast_uuid}", 
@@ -152,7 +154,7 @@ def get_episodes(http, token, podcast_uuid):
     logger.debug("Retrieved %d episodes for podcast UUID: %s", len(episodes), podcast_uuid)
     return episodes
 
-def update_podcast_episode(http, token, body):
+def update_podcast_episode(http: urllib3.PoolManager, token: str, body: bytes) -> Dict[str, Any]:
     header = create_auth_headers(token)
     response = http.request(
         "POST", "https://api.pocketcasts.com/sync/update_episode", headers=header, body=body

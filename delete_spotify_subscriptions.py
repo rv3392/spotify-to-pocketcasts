@@ -8,7 +8,7 @@ import spotify
 
 logger = logging.getLogger(__name__)
 
-def setup_arg_parser():
+def setup_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="delete_spotify_subscriptions.py",
         description="Delete all podcast subscriptions from Spotify",
@@ -21,7 +21,7 @@ def setup_arg_parser():
     return parser
 
 
-def main():
+def main() -> None:
     parser: argparse.ArgumentParser = setup_arg_parser()
     args = parser.parse_args()
 

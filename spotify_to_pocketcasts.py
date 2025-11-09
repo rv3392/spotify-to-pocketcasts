@@ -1,7 +1,7 @@
 import argparse
 import logging
 import os
-from typing import List
+from typing import Any, Dict, List, Optional
 
 import json
 import urllib3
@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 logger = logging.getLogger(__name__)
 load_dotenv()
 
-def setup_arg_parser():
+def setup_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
             prog = "spotify_to_pocketcasts.py",
             description = "Transfer subscriptions and listening history from Spotify to Pocket Casts"
@@ -27,7 +27,7 @@ def setup_arg_parser():
     return parser
 
 
-def check_pocketcasts_login_info(user, pw, token):
+def check_pocketcasts_login_info(user: Optional[str], pw: Optional[str], token: Optional[str]) -> bool:
     if token: 
         return True
     
@@ -40,7 +40,7 @@ def check_pocketcasts_login_info(user, pw, token):
     return True
 
 
-def check_spotify_secrets_info(client_id, secret, redirect_uri):
+def check_spotify_secrets_info(client_id: Optional[str], secret: Optional[str], redirect_uri: Optional[str]) -> bool:
     if not client_id:
         logger.error("No Spotify Client ID given! Please set SPOTIPY_CLIENT_ID or use the --spotify_client_id option")
         return False
@@ -53,9 +53,9 @@ def check_spotify_secrets_info(client_id, secret, redirect_uri):
     return True
 
 
-def create_body_from_spotify_episode(spotify_episode, uuid, episode_uuid):
+def create_body_from_spotify_episode(spotify_episode: spotify.Episode, uuid: str, episode_uuid: str) -> bytes:
     MS_TO_S_FACTOR = 1000
-    body = {
+    body: Dict[str, Any] = {
         "uuid": episode_uuid,
         "podcast": uuid,
     }
@@ -70,7 +70,7 @@ def create_body_from_spotify_episode(spotify_episode, uuid, episode_uuid):
     return json.dumps(body).encode("utf-8")
 
 
-def main():
+def main() -> None:
     parser: argparse.ArgumentParser = setup_arg_parser()
     args = parser.parse_args()
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Any, Dict, List, Optional, Tuple
 import logging
 
 import spotipy
@@ -25,7 +25,7 @@ class Show:
 RATE_LIMIT = 20
 
 
-def do_login(client_id, secret, redirect_uri, extra_scope=None):
+def do_login(client_id: str, secret: str, redirect_uri: str, extra_scope: Optional[str] = None) -> spotipy.Spotify:
     scope = "user-library-read,user-read-playback-position"
     if extra_scope:
         scope = scope + "," + extra_scope
@@ -37,7 +37,7 @@ def do_login(client_id, secret, redirect_uri, extra_scope=None):
     return sp
 
 
-def get_podcasts(sp):
+def get_podcasts(sp: spotipy.Spotify) -> List[Dict[str, Any]]:
     shows = []
     raw_shows_json = sp.current_user_saved_shows(limit=RATE_LIMIT)
     while raw_shows_json:
@@ -49,12 +49,12 @@ def get_podcasts(sp):
     return shows
 
 
-def get_podcasts_with_less_info(sp):
+def get_podcasts_with_less_info(sp: spotipy.Spotify) -> List[Show]:
     shows = get_podcasts(sp)
     return [Show(show["show"]["id"], show["show"]["name"]) for show in shows]
 
 
-def get_listened_episodes_for_show(sp, show) -> List[Episode]:
+def get_listened_episodes_for_show(sp: spotipy.Spotify, show: Show) -> List[Episode]:
     episodes = []
     raw_episodes_json = sp.show_episodes(show.id, limit=50)
     while raw_episodes_json:
@@ -85,17 +85,17 @@ def get_listened_episodes_for_show(sp, show) -> List[Episode]:
     return listened_episodes
 
 
-def populate_listened_episodes(sp, shows: List[Show]):
+def populate_listened_episodes(sp: spotipy.Spotify, shows: List[Show]) -> None:
     for show in shows:
         logger.info("Processing %s", show.title)
         show.episodes = get_listened_episodes_for_show(sp, show)
 
 
-def delete_all_podcast_subscriptions(sp: spotipy.Spotify):
+def delete_all_podcast_subscriptions(sp: spotipy.Spotify) -> Tuple[List[Show], List[Any]]:
     podcasts: List[Show] = get_podcasts_with_less_info(sp)
     podcast_ids = [podcast.id for podcast in podcasts]
     logger.info("Deleting %d podcasts", len(podcast_ids))
-    response_jsons = []
+    response_jsons: List[Any] = []
     for i in range(0, len(podcast_ids), 20):
         res = sp.current_user_saved_shows_delete(podcast_ids[i:i+20])
         response_jsons.append(res)

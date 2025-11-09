@@ -1,3 +1,4 @@
 spotipy==2.22.0
 urllib3==1.26.14
 python-dotenv
+mypy

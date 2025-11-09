@@ -9,3 +9,8 @@ dependencies = [
     "spotipy==2.22.0",
     "urllib3==1.26.14",
 ]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+]
