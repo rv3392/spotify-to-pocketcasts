@@ -1,8 +1,11 @@
 from dataclasses import dataclass, field
 from typing import List
+import logging
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -60,7 +63,7 @@ def get_listened_episodes_for_show(sp, show) -> List[Episode]:
             raw_episodes_json = sp.next(raw_episodes_json)
         else:
             raw_episodes_json = None
-    print(f"There are {len(episodes)} episodes!")
+    logger.debug("Found %d total episodes", len(episodes))
 
     listened_episodes: List[Episode] = []
     for episode in episodes:
@@ -77,23 +80,24 @@ def get_listened_episodes_for_show(sp, show) -> List[Episode]:
                 listened_episodes.append(listened_episode)
             except (KeyError):
                 continue
-    print(f"There are {len(listened_episodes)} started episodes!")
+    logger.debug("Found %d started episodes", len(listened_episodes))
 
     return listened_episodes
 
 
 def populate_listened_episodes(sp, shows: List[Show]):
     for show in shows:
-        print(f"Processing {show.title}")
+        logger.info("Processing %s", show.title)
         show.episodes = get_listened_episodes_for_show(sp, show)
 
 
 def delete_all_podcast_subscriptions(sp: spotipy.Spotify):
     podcasts: List[Show] = get_podcasts_with_less_info(sp)
     podcast_ids = [podcast.id for podcast in podcasts]
-    print(f"Deleting {len(podcast_ids)} podcasts!")
+    logger.info("Deleting %d podcasts", len(podcast_ids))
     response_jsons = []
     for i in range(0, len(podcast_ids), 20):
         res = sp.current_user_saved_shows_delete(podcast_ids[i:i+20])
         response_jsons.append(res)
+    logger.info("Deleted %d podcasts", len(podcast_ids))
     return (podcasts, response_jsons)

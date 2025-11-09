@@ -5,6 +5,7 @@ description = "This is a script to transfer Spotify podcast subscriptions and li
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "python-dotenv>=1.2.1",
     "spotipy==2.22.0",
     "urllib3==1.26.14",
 ]
