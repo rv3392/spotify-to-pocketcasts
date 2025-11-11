@@ -1,0 +1,66 @@
+[project]
+name = "spotify-to-pocketcasts"
+version = "0.1.0"
+description = "This is a script to transfer Spotify podcast subscriptions and listening history to Pocket Casts."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "python-dotenv>=1.2.1",
+    "spotipy>=2.22.0",
+    "urllib3>=1.26.14",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "ruff>=0.1.0",
+]
+
+[tool.ruff]
+# Set the maximum line length
+line-length = 88
+target-version = "py313"
+
+# Enable specific rule sets
+lint.select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+
+# Ignore specific rules if needed
+lint.ignore = []
+
+# Allow autofix for all enabled rules
+lint.fixable = ["ALL"]
+lint.unfixable = []
+
+# Exclude common directories
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+# Use spaces for indentation
+indent-style = "space"
+# Respect magic trailing comma
+skip-magic-trailing-comma = false
+# Automatically detect the appropriate line ending
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+# Use a known-first-party setting if you have a package
+known-first-party = ["spotify_to_pocketcasts"]
