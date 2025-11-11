@@ -10,14 +10,16 @@ from dotenv import load_dotenv
 import pocketcasts
 import spotify
 
-logger = logging.getLogger(__name__)
 load_dotenv()
+logger = logging.getLogger(__name__)
+MS_TO_S_FACTOR = 1000
 
 
 def setup_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="spotify_to_pocketcasts.py",
-        description="Transfer subscriptions and listening history from Spotify to Pocket Casts",
+        description="Transfer subscriptions and listening history from Spotify to "
+        "Pocket Casts",
     )
     parser.add_argument(
         "--pocketcasts_user", default=os.environ.get("POCKETCASTS_EMAIL", None)
@@ -50,12 +52,14 @@ def check_pocketcasts_login_info(
 
     if not user:
         logger.error(
-            "No Pocket Casts username given! Please set POCKETCASTS_EMAIL or use the --pocketcasts_user option"
+            "No Pocket Casts username given! Please set POCKETCASTS_EMAIL or use the "
+            "--pocketcasts_user option"
         )
         return False
     if not pw:
         logger.error(
-            "No Pocket Casts password given! Please set POCKETCASTS_PW or use the --pocketcasts_pw option"
+            "No Pocket Casts password given! Please set POCKETCASTS_PW or use the "
+            "--pocketcasts_pw option"
         )
         return False
     return True
@@ -66,17 +70,20 @@ def check_spotify_secrets_info(
 ) -> bool:
     if not client_id:
         logger.error(
-            "No Spotify Client ID given! Please set SPOTIPY_CLIENT_ID or use the --spotify_client_id option"
+            "No Spotify Client ID given! Please set SPOTIPY_CLIENT_ID or use the "
+            "--spotify_client_id option"
         )
         return False
     if not secret:
         logger.error(
-            "No Spotify Secret given! Please set SPOTIPY_CLIENT_SECRET or use the --spotify_secret option"
+            "No Spotify Secret given! Please set SPOTIPY_CLIENT_SECRET or use the "
+            "--spotify_secret option"
         )
         return False
     if not redirect_uri:
         logger.error(
-            "No Spotify Redirect URI given! Please set SPOTIPY_REDIRECT_URI or use the --spotify_redirect_uri option"
+            "No Spotify Redirect URI given! Please set SPOTIPY_REDIRECT_URI or use the "
+            "--spotify_redirect_uri option"
         )
         return False
     return True
@@ -85,7 +92,6 @@ def check_spotify_secrets_info(
 def create_body_from_spotify_episode(
     spotify_episode: spotify.Episode, uuid: str, episode_uuid: str
 ) -> bytes:
-    MS_TO_S_FACTOR = 1000
     body: dict[str, Any] = {
         "uuid": episode_uuid,
         "podcast": uuid,

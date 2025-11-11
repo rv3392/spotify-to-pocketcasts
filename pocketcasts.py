@@ -36,7 +36,7 @@ def do_login(http: urllib3.PoolManager, user: str | None, pw: str | None) -> str
         return token
     except (json.JSONDecodeError, KeyError) as e:
         logger.error("Failed to parse login response: %s", e)
-        raise Exception(f"Failed to parse login response: {e}")
+        raise Exception(f"Failed to parse login response: {e}") from e
 
 
 def create_auth_headers(token: str) -> dict[str, str]:
@@ -78,7 +78,7 @@ def search_podcasts(http: urllib3.PoolManager, token: str, term: str) -> dict[st
         return json.loads(response.data)
     except json.JSONDecodeError as e:
         logger.error("Failed to parse search response: %s", e)
-        raise Exception(f"Failed to parse search response: {e}")
+        raise Exception(f"Failed to parse search response: {e}") from e
 
 
 def search_podcasts_and_get_first_uuid(
@@ -126,7 +126,8 @@ def add_subscription(
     )
 
     # Accept both 200 (new subscription) and non-200 (already subscribed or error)
-    # as the comment in spotify_to_pocketcasts.py indicates we don't care about the status
+    # as the comment in spotify_to_pocketcasts.py indicates we don't care about
+    # the status
     try:
         return json.loads(response.data)
     except json.JSONDecodeError:
@@ -157,7 +158,7 @@ def get_episodes(
         data = json.loads(response.data)
     except json.JSONDecodeError as e:
         logger.error("Failed to parse episodes response: %s", e)
-        raise Exception(f"Failed to parse episodes response: {e}")
+        raise Exception(f"Failed to parse episodes response: {e}") from e
 
     try:
         data["podcast"]["episodes"]
@@ -200,7 +201,7 @@ def update_podcast_episode(
         return json.loads(response.data)
     except json.JSONDecodeError as e:
         logger.error("Failed to parse update episode response: %s", e)
-        raise Exception(f"Failed to parse update episode response: {e}")
+        raise Exception(f"Failed to parse update episode response: {e}") from e
 
 
 if __name__ == "__main__":

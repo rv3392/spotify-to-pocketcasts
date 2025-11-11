@@ -47,10 +47,7 @@ def get_podcasts(sp: spotipy.Spotify) -> list[dict[str, Any]]:
     raw_shows_json = sp.current_user_saved_shows(limit=RATE_LIMIT)
     while raw_shows_json:
         shows += raw_shows_json["items"]
-        if raw_shows_json["next"]:
-            raw_shows_json = sp.next(raw_shows_json)
-        else:
-            raw_shows_json = None
+        raw_shows_json = sp.next(raw_shows_json) if raw_shows_json["next"] else None
     return shows
 
 
@@ -79,7 +76,8 @@ def get_listened_episodes_for_show(sp: spotipy.Spotify, show: Show) -> list[Epis
                     episode["resume_point"].get("fully_played", False),
                     episode["resume_point"].get("resume_position_ms", 0),
                 )
-                # Ignore episodes that haven't been fully listened to and haven't been started
+                # Ignore episodes that haven't been fully listened to
+                # and haven't been started
                 if (
                     not listened_episode.fully_played
                     and listened_episode.resume_pos_ms == 0
