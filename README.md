@@ -90,6 +90,25 @@ uv sync --group dev
 uv run mypy . --ignore-missing-imports
 ```
 
+### Linting and Formatting
+This project uses [ruff](https://docs.astral.sh/ruff/) for linting and code formatting:
+```bash
+# Install dev dependencies (if not already installed)
+uv sync --group dev
+
+# Check for linting issues
+uv run ruff check .
+
+# Auto-fix linting issues
+uv run ruff check --fix .
+
+# Format code
+uv run ruff format .
+
+# Check and format together
+uv run ruff check --fix . && uv run ruff format .
+```
+
 ### Delete Script
 To delete all Spotify podcast subscriptions (use with caution!):
 ```bash
